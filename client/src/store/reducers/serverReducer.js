@@ -40,9 +40,9 @@ export const serverReducer = (state = initialState, { type, payload }) => {
         case actions.CREATE_CATEGORY_SUCCESSFUL:
             return {
                 ...state,
-                server: {
-                    categories: [...state.server.categories, { name: payload }],
-                },
+                // server: {
+                //     categories: [...state.server.categories, { name: payload }],
+                // },
             };
         case actions.CREATE_CHANNEL_SUCCESSFUL:
             return {

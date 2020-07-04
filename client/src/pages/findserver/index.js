@@ -6,6 +6,7 @@ import {
     fetchAllServers,
     joinServerAction,
 } from "../../store/actions/serverActions";
+import { fetchUserServersAction } from "../../store/actions/userActions";
 
 const FindServer = () => {
     const dispatch = useDispatch();
@@ -18,8 +19,9 @@ const FindServer = () => {
 
     const allServers = useSelector((state) => state.servers.allServers);
 
-    const joinServer = (serverId) => {
-        dispatch(joinServerAction({ auth_token, userId, serverId }));
+    const joinServer = async (serverId) => {
+        await dispatch(joinServerAction({ auth_token, userId, serverId }));
+        dispatch(fetchUserServersAction({ auth_token, userId }));
     };
 
     useEffect(() => {

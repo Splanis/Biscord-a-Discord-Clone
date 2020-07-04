@@ -2,20 +2,23 @@ import React, { useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { createServerAction } from "../../store/actions/serverActions";
+import { fetchUserServersAction } from "../../store/actions/userActions";
 
 const CreateServer = () => {
     const dispatch = useDispatch();
-    const userid = useSelector((state) => state.user.profile._id);
+    const userId = useSelector((state) => state.user.profile._id);
+    const auth_token = useSelector((state) => state.user.profile.auth_token);
 
     const [serverDetails, setserverDetails] = useState({
         name: "",
         isPrivate: false,
-        owner: userid,
+        owner: userId,
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(createServerAction(serverDetails));
+        await dispatch(createServerAction(serverDetails));
+        dispatch(fetchUserServersAction({ auth_token, userId }));
     };
 
     return (

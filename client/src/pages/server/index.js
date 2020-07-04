@@ -52,6 +52,9 @@ const Server = ({ match }) => {
                         categories={server.categories}
                         serverId={server._id}
                         auth_token={auth_token}
+                        isAdmin={isAdmin}
+                        userId={userId}
+                        owner={server.owner}
                     />
                 </div>
             </div>
