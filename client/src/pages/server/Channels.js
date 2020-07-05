@@ -1,27 +1,20 @@
 import React from "react";
 
-const Channels = ({ channels }) => {
-    const joinChannel = () => {
-        console.log("joining");
-    };
+import Channel from "./Channel";
+
+const Channels = ({ categoryId, channels, serverId, auth_token, userId }) => {
     return (
-        <div style={{ marginLeft: 15 }}>
+        <div>
             {channels &&
                 channels.map((channel) => (
-                    <div style={{ margin: 10 }} key={channel._id}>
-                        #{"   "}
-                        <button
-                            style={{
-                                background: "none",
-                                color: "lightgray",
-                                fontSize: 14,
-                                border: "none",
-                            }}
-                            onClick={() => joinChannel()}
-                        >
-                            {channel.name}
-                        </button>
-                    </div>
+                    <Channel
+                        key={channel._id}
+                        channel={channel}
+                        categoryId={categoryId}
+                        serverId={serverId}
+                        auth_token={auth_token}
+                        userId={userId}
+                    />
                 ))}
         </div>
     );
