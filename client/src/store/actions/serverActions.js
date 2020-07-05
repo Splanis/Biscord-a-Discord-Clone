@@ -1,24 +1,22 @@
 import * as actions from "../actions/actionTypes";
 
-export const createServerAction = (serverDetails) => async (
+export const createServerAction = ({ serverDetails, auth_token }) => async (
     dispatch,
     getState
 ) => {
     try {
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
+        headers.append("auth_token", auth_token);
 
-        const response = await fetch("api/servers/", {
+        await fetch("http://localhost:5000/api/servers/", {
             method: "POST",
             headers,
             body: JSON.stringify(serverDetails),
         });
 
-        const data = await response.json();
-
         dispatch({
             type: actions.SERVER_CREATED,
-            payload: serverDetails.name,
         });
     } catch (error) {
         dispatch({ type: actions.SERVER_CREATION_FAILED, payload: error.code });
@@ -38,6 +36,7 @@ export const fetchServerAction = ({ auth_token, serverId }) => async (
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("auth_token", auth_token);
+
         const response = await fetch(
             `http://localhost:5000/api/servers/${serverId}`,
             {
@@ -136,28 +135,14 @@ export const createCategoryAction = ({
             },
         };
 
-        await fetch(
-            `http://localhost:5000/api/servers/${serverId}/createcategory`,
-            {
-                method: "POST",
-                headers,
-                body: JSON.stringify(body),
-            }
-        );
-
-        // const response = await fetch(
-        //     `http://localhost:5000/api/servers/${serverId}`,
-        //     {
-        //         method: "GET",
-        //         headers,
-        //     }
-        // );
-
-        // const data = await response.json();
-        // console.log(data);
+        await fetch(`http://localhost:5000/api/servers/${serverId}/`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(body),
+        });
 
         dispatch({
-            type: actions.CREATE_CATEGORY_SUCCESSFUL,
+            type: actions.CREATE_CATEGORY_SUCCESS,
             payload: categoryName,
         });
     } catch (error) {
@@ -186,7 +171,7 @@ export const createChannelAction = ({
         };
 
         await fetch(
-            `http://localhost:5000/api/servers/${serverId}/${categoryId}/createchannel`,
+            `http://localhost:5000/api/servers/${serverId}/${categoryId}`,
             {
                 method: "POST",
                 headers,
@@ -195,8 +180,7 @@ export const createChannelAction = ({
         );
 
         dispatch({
-            type: actions.CREATE_CHANNEL_SUCCESSFUL,
-            // payload: categoryName,
+            type: actions.CREATE_CHANNEL_SUCCESS,
         });
     } catch (error) {
         dispatch({
@@ -208,9 +192,43 @@ export const createChannelAction = ({
 
 export const joinChannelAction = ({
     auth_token,
-    channelName,
-    categoryName,
+    channelId,
+    categoryId,
     serverId,
+}) => async (dispatch, getState) => {
+    try {
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        headers.append("auth_token", auth_token);
+        const response = await fetch(
+            `http://localhost:5000/api/servers/${serverId}/${categoryId}/${channelId}`,
+            {
+                method: "GET",
+                headers,
+            }
+        );
+
+        const channel = await response.json();
+ 
+        dispatch({
+            type: actions.JOIN_CHANNEL_SUCCESS,
+            payload: { channel, categoryId },
+        });
+    } catch (error) {
+        dispatch({
+            type: actions.JOIN_CHANNEL_FAIL,
+            payload: error,
+        });
+    }
+};
+
+export const postToChannelAction = ({
+    auth_token,
+    channelId,
+    categoryId,
+    serverId,
+    post,
+    userId,
 }) => async (dispatch, getState) => {
     try {
         const headers = new Headers();
@@ -218,13 +236,12 @@ export const joinChannelAction = ({
         headers.append("auth_token", auth_token);
 
         const body = {
-            channel: {
-                name: channelName,
-            },
+            content: post,
+            owner: userId,
         };
 
         await fetch(
-            `http://localhost:5000/api/servers/${serverId}/${categoryName}/createchannel`,
+            `http://localhost:5000/api/servers/${serverId}/${categoryId}/${channelId}`,
             {
                 method: "POST",
                 headers,
@@ -233,12 +250,46 @@ export const joinChannelAction = ({
         );
 
         dispatch({
-            type: actions.CREATE_CHANNEL_SUCCESSFUL,
-            payload: categoryName,
+            type: actions.POST_TO_CHANNEL_SUCCESS,
         });
     } catch (error) {
         dispatch({
-            type: actions.CREATE_CHANNEL_FAIL,
+            type: actions.POST_TO_CHANNEL_FAIL,
+            payload: error,
+        });
+    }
+};
+
+export const getUserAction = ({ auth_token, userId }) => async (
+    dispatch,
+    getState
+) => {
+    try {
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        headers.append("auth_token", auth_token);
+
+        dispatch({
+            type: actions.GET_USER_STARTED,
+        });
+
+        const response = await fetch(
+            `http://localhost:5000/api/user/${userId}`,
+            {
+                method: "GET",
+                headers,
+            }
+        );
+
+        const user = response.json();
+
+        dispatch({
+            type: actions.GET_USER_SUCCESS,
+            payload: user,
+        });
+    } catch (error) {
+        dispatch({
+            type: actions.GET_USER_FAIL,
             payload: error,
         });
     }
