@@ -39,7 +39,11 @@ const Categories = ({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start",
+                background: "#484848",
+                padding: 5,
+                minHeight: "100vh",
+                minWidth: 200,
             }}
         >
             {isAdmin(owner, userId) && (
@@ -67,6 +71,7 @@ const Categories = ({
                         >
                             <Input
                                 type="text"
+                                value={categoryName}
                                 onChange={(e) =>
                                     setCategoryName(e.target.value)
                                 }
@@ -102,11 +107,14 @@ const Categories = ({
                 {categories &&
                     categories.map((category) => (
                         <Category
+                            key={category._id}
                             category={category}
                             auth_token={auth_token}
                             serverId={serverId}
+                            userId={userId}
                             channels={category.channels}
-                            key={category._id}
+                            isAdmin={isAdmin}
+                            owner={owner}
                         />
                     ))}
             </div>

@@ -10,12 +10,23 @@ import {
 import Channels from "./Channels";
 
 import { Button, Input, IconButton } from "@material-ui/core";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
-const Category = ({ category, auth_token, serverId, channels }) => {
+const Category = ({
+    category,
+    serverId,
+    channels,
+    auth_token,
+    userId,
+    isAdmin,
+    owner,
+}) => {
     const dispatch = useDispatch();
 
     const [toggleChannelInput, setToggleChannelInput] = useState(false);
     const [channelName, setChannelName] = useState("");
+    const [toggleVisibility, setToggleVisibillty] = useState(true);
 
     const createChannel = async () => {
         if (channelName) {
@@ -33,19 +44,47 @@ const Category = ({ category, auth_token, serverId, channels }) => {
     };
 
     return (
-        <div style={{ marginLeft: 10 }}>
-            {category.name}
-            <IconButton
-                size="small"
-                variant="contained"
-                color="secondary"
-                onClick={() => setToggleChannelInput(true)}
-                style={{ margin: 5, display: toggleChannelInput && "none" }}
+        <div style={{ marginTop: 20 }}>
+            <button
+                style={{
+                    fontWeight: 500,
+                    fontSize: 17,
+                    display: "flex",
+                    alignItems: "center",
+                    color: "white",
+                    background: "transparent",
+                    border: "none",
+                }}
+                onClick={() =>
+                    setToggleVisibillty((toggleVisibility) => !toggleVisibility)
+                }
             >
-                +
-            </IconButton>
-
+                {category.name}
+                {toggleVisibility ? (
+                    <ArrowDownwardIcon
+                        style={{ marginLeft: 3 }}
+                        fontSize="small"
+                    />
+                ) : (
+                    <ArrowForwardIcon
+                        style={{ marginLeft: 3 }}
+                        fontSize="small"
+                    />
+                )}
+            </button>
             {/* admin options */}
+            {isAdmin(userId, owner) && (
+                <IconButton
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => setToggleChannelInput(true)}
+                    style={{ margin: 5, display: toggleChannelInput && "none" }}
+                >
+                    +
+                </IconButton>
+            )}
+
             {toggleChannelInput && (
                 <div
                     style={{
@@ -57,6 +96,7 @@ const Category = ({ category, auth_token, serverId, channels }) => {
                 >
                     <Input
                         type="text"
+                        value={channelName}
                         onChange={(e) => setChannelName(e.target.value)}
                         style={{ margin: 5, color: "white" }}
                     />
@@ -83,7 +123,15 @@ const Category = ({ category, auth_token, serverId, channels }) => {
                 </div>
             )}
 
-            <Channels channels={channels} />
+            {toggleVisibility && (
+                <Channels
+                    categoryId={category._id}
+                    channels={channels}
+                    serverId={serverId}
+                    auth_token={auth_token}
+                    userId={userId}
+                />
+            )}
         </div>
     );
 };
