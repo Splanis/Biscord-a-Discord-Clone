@@ -3,6 +3,7 @@ import * as actions from "../actions/actionTypes";
 const initialState = {
     serverCreationError: null,
     loading: false,
+    currentChannel: [],
 };
 
 export const serverReducer = (state = initialState, { type, payload }) => {
@@ -37,20 +38,18 @@ export const serverReducer = (state = initialState, { type, payload }) => {
                 ...state,
                 loading: false,
             };
-        case actions.CREATE_CATEGORY_SUCCESSFUL:
+        case actions.CREATE_CATEGORY_SUCCESS:
             return {
                 ...state,
-                // server: {
-                //     categories: [...state.server.categories, { name: payload }],
-                // },
             };
-        case actions.CREATE_CHANNEL_SUCCESSFUL:
+        case actions.CREATE_CHANNEL_SUCCESS:
             return {
                 ...state,
-                // server: {
-                //     categories: [...state.server.categories, { name: payload }],
-                // },
             };
+        case actions.JOIN_CHANNEL_SUCCESS:
+            const currentChannel = payload.channel.channel;
+            currentChannel.categoryId = payload.categoryId;
+            return { ...state, currentChannel: currentChannel };
         case actions.FETCH_FAIL || actions.JOIN_FAIL:
             return {
                 ...state,
@@ -60,3 +59,4 @@ export const serverReducer = (state = initialState, { type, payload }) => {
             return state;
     }
 };
+
