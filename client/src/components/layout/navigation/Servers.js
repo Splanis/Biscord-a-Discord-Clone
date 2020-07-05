@@ -14,19 +14,6 @@ import {
     IconButton,
 } from "@material-ui/core";
 
-const colors = [
-    "yellow",
-    "pink",
-    "red",
-    "blue",
-    "orange",
-    "green",
-    "brown",
-    "purple",
-    "white",
-    "cyan",
-];
-
 const Servers = () => {
     const dispatch = useDispatch();
 
@@ -44,8 +31,6 @@ const Servers = () => {
         state.user.servers ? state.user.servers.servers : null
     );
 
-    // console.log(servers);
-
     useEffect(() => {
         dispatch(fetchUserServersAction({ auth_token, userId }));
     }, [isUser]);
@@ -55,35 +40,42 @@ const Servers = () => {
             <div>
                 {servers &&
                     servers.map((server) => (
-                        <ListItem button key={server._id}>
-                            <Link
-                                to={`/server/${server._id}`}
+                        <Link
+                            key={server._id}
+                            to={`/server/${server._id}`}
+                            style={{
+                                color: "white",
+                                textDecoration: "none",
+                            }}
+                        >
+                            <ListItem
+                                button
                                 style={{
-                                    color: "white",
-                                    textDecoration: "none",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    fontSize: 22,
+                                    background: server.color,
+                                    borderRadius: "50%",
+                                    width: 60,
+                                    height: 60,
+                                    margin: 10,
+                                    border: "3px solid white",
+                                    textShadow:
+                                        "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
                                 }}
                             >
-                                <IconButton
-                                    color="secondary"
-                                    aria-label="add an alarm"
+                                <div
                                     style={{
-                                        color:
-                                            colors[
-                                                Math.floor(
-                                                    Math.random() *
-                                                        colors.length
-                                                )
-                                            ],
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
                                     }}
                                 >
                                     {server.name[0].toUpperCase()}
-                                </IconButton>
-                            </Link>
-                        </ListItem>
-                        //      <ListItem button key={text}>
-                        //      <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        //      <ListItemText primary={text} />
-                        //    </ListItem>
+                                </div>
+                            </ListItem>{" "}
+                        </Link>
                     ))}
             </div>
         </div>
