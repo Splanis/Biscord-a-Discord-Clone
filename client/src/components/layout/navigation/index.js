@@ -20,7 +20,7 @@ import AddIcon from "@material-ui/icons/Add";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 
-const drawerWidth = 82;
+const drawerWidth = 81;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme) => ({
         flexShrink: 0,
     },
     drawerPaper: {
-        width: drawerWidth,
-        background: "#262626",
+        minWidth: drawerWidth,
+        background: "#282828",
         color: "white",
     },
     // necessary for content to be below app bar
@@ -52,6 +52,9 @@ const Navigation = () => {
     const isUser = useSelector((state) => (state.user.profile ? true : false));
     const profile = useSelector((state) => state.user.profile);
 
+    // const test = useSelector((state) => state);
+    // console.log(test);
+
     let username = null;
 
     if (profile) {
@@ -62,13 +65,6 @@ const Navigation = () => {
 
     if (isUser) {
         return (
-            // <div>
-            //     <Link to="/logout">Logout</Link>
-            //     <Link to="/createserver">Create Server</Link>
-            //     <Link to="/findserver">Find Server</Link>
-            //     <Servers />
-            //     {username}
-            // </div>
             <Drawer
                 className={classes.drawer}
                 variant="permanent"
@@ -77,7 +73,6 @@ const Navigation = () => {
                 }}
                 anchor="left"
             >
-                {/* <div className={classes.toolbar} /> */}
                 <List>
                     <ListItem button>
                         <Link to="/">
