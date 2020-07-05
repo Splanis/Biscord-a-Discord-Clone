@@ -7,7 +7,7 @@ import { fetchUserServersAction } from "../../store/actions/userActions";
 const CreateServer = () => {
     const dispatch = useDispatch();
     const userId = useSelector((state) => state.user.profile._id);
-    const auth_token = useSelector((state) => state.user.profile.auth_token);
+    const auth_token = useSelector((state) => state.user.auth_token);
 
     const [serverDetails, setserverDetails] = useState({
         name: "",
@@ -17,7 +17,7 @@ const CreateServer = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await dispatch(createServerAction(serverDetails));
+        await dispatch(createServerAction({ serverDetails, auth_token }));
         dispatch(fetchUserServersAction({ auth_token, userId }));
     };
 
