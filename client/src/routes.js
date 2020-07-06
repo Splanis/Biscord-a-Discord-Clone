@@ -22,7 +22,7 @@ const Routes = () => {
                 <Route exact path="/logout" component={Logout} />
                 <Route exact path="/profile" component={Profile} />
                 <Route exact path="/createserver" component={CreateServer} />
-                <Route exact path="/server/:id" component={Server} />
+                <Route exact path="/server/:serverId" component={Server} />
                 <Route exact path="/findserver" component={FindServer} />
                 <Redirect to="/" />
             </Switch>
