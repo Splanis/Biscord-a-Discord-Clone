@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-const Post = ({ post, auth_token }) => {
+const Post = ({ post, auth_token, prevOwner }) => {
     const [user, setUser] = useState({});
 
-    const date = new Date();
-    const today =
-        date.getFullYear() +
-        "-" +
-        ("0" + (date.getMonth() + 1)).slice(-2) +
-        "-" +
-        ("0" + date.getDate()).slice(-2);
+    const today = new Date().toLocaleDateString();
+    const postDate = new Date(post.dateCreated).toLocaleDateString();
+    const postTime = new Date(post.dateCreated).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    // console.log(post);
 
     const fetchPostUser = async () => {
         const headers = new Headers();
@@ -42,28 +43,31 @@ const Post = ({ post, auth_token }) => {
                     alignItems: "center",
                 }}
             >
-                <div
-                    style={{
-                        color: "lightcyan",
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: 16,
-                    }}
-                >
-                    {user.username}
-                </div>
+                {post.owner != prevOwner && (
+                    <div
+                        style={{
+                            color: "lightcyan",
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: 16,
+                        }}
+                    >
+                        {user.username}
+                    </div>
+                )}
+
                 <div style={{ fontSize: 11, color: "gray", marginLeft: 5 }}>
-                    {post.dateCreated.slice(0, 10) == today
-                        ? "Today"
-                        : post.dateCreated.slice(0, 10)}
-                    {"   "}
-                    {post.dateCreated.slice(12, 16)}
+                    {post.owner != prevOwner &&
+                        (postDate == today ? (
+                            <div>Today at {postTime}</div>
+                        ) : (
+                            (postDate, "at ", postTime)
+                        ))}
                 </div>
             </div>
             <div
                 style={{
-                    padding: 5,
-                    margin: 5,
+                    margin: "5px 15px",
                 }}
             >
                 {post.content}
