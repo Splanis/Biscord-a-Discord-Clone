@@ -200,6 +200,7 @@ export const joinChannelAction = ({
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("auth_token", auth_token);
+
         const response = await fetch(
             `http://localhost:5000/api/servers/${serverId}/${categoryId}/${channelId}`,
             {
@@ -209,7 +210,7 @@ export const joinChannelAction = ({
         );
 
         const channel = await response.json();
- 
+
         dispatch({
             type: actions.JOIN_CHANNEL_SUCCESS,
             payload: { channel, categoryId },
@@ -229,6 +230,7 @@ export const postToChannelAction = ({
     serverId,
     post,
     userId,
+    dateCreated,
 }) => async (dispatch, getState) => {
     try {
         const headers = new Headers();
@@ -238,6 +240,7 @@ export const postToChannelAction = ({
         const body = {
             content: post,
             owner: userId,
+            dateCreated,
         };
 
         await fetch(
