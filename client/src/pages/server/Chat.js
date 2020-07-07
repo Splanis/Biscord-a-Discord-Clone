@@ -6,19 +6,18 @@ import { postToChannelAction } from "../../store/actions/serverActions";
 
 import Posts from "./Posts";
 
-import TextField from "@material-ui/core/TextField";
-import { Button } from "@material-ui/core";
+import { socket } from "./index";
 
-const Chat = ({ auth_token, userId, serverId }) => {
+const Chat = ({ auth_token, userId, serverId, currentChannel }) => {
     const dispatch = useDispatch();
 
     const [post, setPost] = useState("");
-
-    const currentChannel = useSelector((state) => state.servers.currentChannel);
-    // console.log(currentChannel);
+    const [posts, setPosts] = useState([]);
 
     const handlePost = () => {
         if (post) {
+            const dateCreated = Date.now();
+
             dispatch(
                 postToChannelAction({
                     auth_token,
@@ -27,11 +26,46 @@ const Chat = ({ auth_token, userId, serverId }) => {
                     post,
                     channelId: currentChannel._id,
                     categoryId: currentChannel.categoryId,
+                    dateCreated,
                 })
             );
+
+            socket.emit("userPost", {
+                post,
+                userId,
+                channelId: currentChannel._id,
+                dateCreated,
+            });
             setPost("");
+            setPosts([
+                ...posts,
+                {
+                    content: post,
+                    owner: userId,
+                    channelId: currentChannel._id,
+                    dateCreated,
+                },
+            ]);
         }
     };
+
+    useEffect(() => {
+        socket.on("post", ({ post, userId, channelId, dateCreated }) => {
+            setPosts([
+                ...posts,
+                {
+                    content: post,
+                    owner: userId,
+                    channelId,
+                    dateCreated,
+                },
+            ]);
+        });
+    }, [posts]);
+
+    useEffect(() => {
+        setPosts(currentChannel.posts);
+    }, [currentChannel]);
 
     return (
         <div
@@ -54,7 +88,12 @@ const Chat = ({ auth_token, userId, serverId }) => {
                 {"#   "}
                 {currentChannel.name}
             </div>
-            <Posts posts={currentChannel.posts} auth_token={auth_token} />
+            <Posts
+                posts={posts}
+                auth_token={auth_token}
+                currentChannel={currentChannel}
+                serverId={serverId}
+            />
             <div
                 style={{
                     display: "flex",
@@ -68,31 +107,19 @@ const Chat = ({ auth_token, userId, serverId }) => {
                     type="text"
                     value={post}
                     onChange={(e) => setPost(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handlePost()}
+                    autoFocus={true}
+                    placeholder={`Message at #${currentChannel.name}`}
                     style={{
                         color: "white",
-                        background: "transparent",
+                        background: "#282828",
                         fontSize: 16,
-                        border: "1px solid #",
+                        border: "none",
                         borderRadius: 20,
-                        padding: 10,
+                        padding: 15,
                         width: "100%",
                     }}
                 />
-
-                <Button
-                    onClick={() => handlePost()}
-                    variant="contained"
-                    color="primary"
-                    style={{ margin: 10, marginBottom: 15 }}
-                >
-                    Send
-                </Button>
-                {/* <TextField
-                    style={{ width: "100%", bottom: 0 }}
-                    id="filled-basic"
-                    label="message"
-                    variant="filled"
-                /> */}
             </div>
         </div>
     );
