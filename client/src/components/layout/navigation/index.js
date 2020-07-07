@@ -1,21 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import Servers from "./Servers";
 
-import {
-    Drawer,
-    Divider,
-    IconButton,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-} from "@material-ui/core";
+import { fetchUserServersAction } from "../../../store/actions/userActions";
+
+import { Drawer, Divider, IconButton, List, ListItem } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { loadCSS } from "fg-loadcss";
 import AddIcon from "@material-ui/icons/Add";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
@@ -49,11 +42,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Navigation = () => {
+    const dispatch = useDispatch();
+
     const isUser = useSelector((state) => (state.user.profile ? true : false));
     const profile = useSelector((state) => state.user.profile);
 
     // const test = useSelector((state) => state);
     // console.log(test);
+
+    const auth_token = useSelector((state) =>
+        state.user.auth_token ? state.user.auth_token : null
+    );
+
+    const userId = useSelector((state) =>
+        state.user.profile ? state.user.profile._id : null
+    );
 
     let username = null;
 
@@ -62,6 +65,10 @@ const Navigation = () => {
     }
 
     const classes = useStyles();
+
+    useEffect(() => {
+        dispatch(fetchUserServersAction({ auth_token, userId }));
+    }, [isUser]);
 
     if (isUser) {
         return (
