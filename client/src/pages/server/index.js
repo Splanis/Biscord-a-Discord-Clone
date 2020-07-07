@@ -1,14 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
+import io from "socket.io-client";
+
 import Categories from "./Categories";
+import Chat from "./Chat";
+import Members from "./Members";
 
-import { fetchServerAction } from "../../store/actions/serverActions";
+import {
+    fetchServerAction,
+    joinChannelAction,
+} from "../../store/actions/serverActions";
 
-const isAdmin = (userId, serverId) => {
-    return userId === serverId;
+import "./index.css";
+
+const isAdmin = (userId, serverOwnerId) => {
+    return userId === serverOwnerId;
 };
+
+export const socket = io("localhost:5000");
 
 const Server = ({ match }) => {
     const dispatch = useDispatch();
@@ -25,10 +36,25 @@ const Server = ({ match }) => {
         state.servers.server ? state.servers.server : null
     );
 
-    const serverId = match.params.id;
+    const currentChannel = useSelector((state) => state.servers.currentChannel);
+
     useEffect(() => {
-        dispatch(fetchServerAction({ auth_token, serverId }));
-    }, [match.params.id]);
+        dispatch(
+            fetchServerAction({ auth_token, serverId: match.params.serverId })
+        );
+    }, [match.params.serverId]);
+
+    useEffect(() => {
+        socket.emit("join", {
+            userId,
+            channelId: currentChannel._id,
+        });
+
+        return () => {
+            socket.emit("disconnect");
+            socket.off();
+        };
+    }, [currentChannel]);
 
     return (
         <div
@@ -58,16 +84,29 @@ const Server = ({ match }) => {
                     />
                 </div>
             </div>
+            <div style={{ flex: 6 }} className="chat">
+                <Chat
+                    serverId={server._id}
+                    auth_token={auth_token}
+                    userId={userId}
+                    currentChannel={currentChannel}
+                />
+            </div>
             <div
-                style={{ flex: 6, overflowY: "scroll" }}
-                className="chat"
-            ></div>
-            <div style={{ flex: 1, overflowY: "scroll" }} className="members">
-                Members:
-                {server.members &&
-                    server.members.map((member) => (
-                        <div>{member.username}</div>
-                    ))}
+                style={{ flex: 1, overflowY: "scroll", background: "#292929" }}
+                className="members"
+            >
+                <div
+                    style={{
+                        background: "#181818",
+                        height: 40,
+                    }}
+                ></div>
+                <Members
+                    server={server}
+                    isAdmin={isAdmin}
+                    owner={server.owner}
+                />
             </div>
         </div>
     );
