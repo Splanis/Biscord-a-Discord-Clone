@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { fetchUserServersAction } from "../../../store/actions/userActions";
-
 import {
     List,
     ListItem,
@@ -15,25 +13,9 @@ import {
 } from "@material-ui/core";
 
 const Servers = () => {
-    const dispatch = useDispatch();
-
-    const auth_token = useSelector((state) =>
-        state.user.auth_token ? state.user.auth_token : null
-    );
-
-    const isUser = useSelector((state) => (state.user.profile ? true : false));
-
-    const userId = useSelector((state) =>
-        state.user.profile ? state.user.profile._id : null
-    );
-
     const servers = useSelector((state) =>
         state.user.servers ? state.user.servers.servers : null
     );
-
-    useEffect(() => {
-        dispatch(fetchUserServersAction({ auth_token, userId }));
-    }, [isUser]);
 
     return (
         <div>
