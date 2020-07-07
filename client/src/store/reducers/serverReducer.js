@@ -26,6 +26,10 @@ export const serverReducer = (state = initialState, { type, payload }) => {
                 ...state,
                 server: payload,
                 loading: false,
+                currentChannel: {
+                    ...payload.categories[0].channels[0],
+                    categoryId: payload.categories[0]._id,
+                },
             };
         case actions.SERVERS_FETCH_SUCCESS:
             return {
@@ -46,6 +50,11 @@ export const serverReducer = (state = initialState, { type, payload }) => {
             return {
                 ...state,
             };
+        case actions.POST_TO_CHANNEL_SUCCESS:
+            return {
+                ...state,
+                currentPost: payload,
+            };
         case actions.JOIN_CHANNEL_SUCCESS:
             const currentChannel = payload.channel.channel;
             currentChannel.categoryId = payload.categoryId;
@@ -59,4 +68,3 @@ export const serverReducer = (state = initialState, { type, payload }) => {
             return state;
     }
 };
-
