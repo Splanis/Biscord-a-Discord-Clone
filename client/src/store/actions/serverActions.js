@@ -243,7 +243,7 @@ export const postToChannelAction = ({
             dateCreated,
         };
 
-        await fetch(
+        const response = await fetch(
             `http://localhost:5000/api/servers/${serverId}/${categoryId}/${channelId}`,
             {
                 method: "POST",
@@ -252,12 +252,54 @@ export const postToChannelAction = ({
             }
         );
 
+        const newPost = await response.json();
+
         dispatch({
             type: actions.POST_TO_CHANNEL_SUCCESS,
+            payload: newPost.postId,
         });
     } catch (error) {
         dispatch({
             type: actions.POST_TO_CHANNEL_FAIL,
+            payload: error,
+        });
+    }
+};
+
+export const editPostAction = ({
+    auth_token,
+    channelId,
+    categoryId,
+    serverId,
+    post,
+    content,
+    postId,
+}) => async (dispatch, getState) => {
+    try {
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        headers.append("auth_token", auth_token);
+
+        const body = {
+            post,
+            content,
+        };
+
+        await fetch(
+            `http://localhost:5000/api/servers/${serverId}/${categoryId}/${channelId}/${postId}`,
+            {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify(body),
+            }
+        );
+
+        dispatch({
+            type: actions.EDIT_POST_SUCCESS,
+        });
+    } catch (error) {
+        dispatch({
+            type: actions.EDIT_POST_FAIL,
             payload: error,
         });
     }
