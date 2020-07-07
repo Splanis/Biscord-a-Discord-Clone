@@ -2,7 +2,7 @@ import React from "react";
 
 import Post from "./Post";
 
-const Posts = ({ posts, auth_token }) => {
+const Posts = ({ posts, auth_token, currentChannel, serverId }) => {
     const divRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -27,6 +27,8 @@ const Posts = ({ posts, auth_token }) => {
                                 post={post}
                                 prevOwner={posts[index - 1].owner}
                                 auth_token={auth_token}
+                                currentChannel={currentChannel}
+                                serverId={serverId}
                             />
                         ) : (
                             <Post
@@ -34,6 +36,8 @@ const Posts = ({ posts, auth_token }) => {
                                 post={post}
                                 prevOwner={null}
                                 auth_token={auth_token}
+                                currentChannel={currentChannel}
+                                serverId={serverId}
                             />
                         )
                     )}
