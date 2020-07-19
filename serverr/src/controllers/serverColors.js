@@ -1,0 +1,16 @@
+export const serverColors = [
+    "yellow",
+    "pink",
+    "red",
+    "blue",
+    "orange",
+    "green",
+    "brown",
+    "purple",
+    "DarkCyan",
+    "Coral",
+    "BlueViolet",
+    "DarkSlateGray",
+    "DimGrey",
+    "Gold",
+];
