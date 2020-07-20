@@ -39,7 +39,7 @@ const Login = () => {
             <h1 style={{ margin: "20px 0" }}>Login</h1>
             <form onSubmit={handleSubmit}>
                 <FormGroup>
-                    <InputLabel LabelhtmlFor="email">Email</InputLabel>
+                    <InputLabel labelhtmlFor="email">Email</InputLabel>
                     <Input
                         style={{ margin: "20px 0" }}
                         id="email"
@@ -51,7 +51,7 @@ const Login = () => {
                             })
                         }
                     />
-                    <InputLabel htmlFor="password">Password</InputLabel>
+                    <InputLabel labelhtmlFor="password">Password</InputLabel>
                     <Input
                         style={{ margin: "20px 0" }}
                         id="password"
