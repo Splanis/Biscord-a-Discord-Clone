@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 import App from "./App";
 
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import store from "./store/store.js";
 
 import GlobalTheme from "./components/shared/GlobalTheme";
