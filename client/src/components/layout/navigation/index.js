@@ -32,8 +32,6 @@ const useStyles = makeStyles((theme) => ({
         background: "#282828",
         color: "white",
     },
-    // necessary for content to be below app bar
-    // toolbar: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.default,
@@ -57,12 +55,6 @@ const Navigation = () => {
     const userId = useSelector((state) =>
         state.user.profile ? state.user.profile._id : null
     );
-
-    let username = null;
-
-    if (profile) {
-        username = profile.username;
-    }
 
     const classes = useStyles();
 
@@ -114,6 +106,9 @@ const Navigation = () => {
                     <Servers />
                 </List>
                 <Divider />
+                <List style={{ marginTop: "auto" }}>
+                    <ListItem>{profile.username}</ListItem>
+                </List>
             </Drawer>
         );
     }
