@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import {
     createChannelAction,
     fetchServerAction,
-} from "../../store/actions/serverActions";
+} from "../../../store/actions/serverActions";
 
 import Channels from "./Channels";
 

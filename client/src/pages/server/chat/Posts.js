@@ -16,6 +16,7 @@ const Posts = ({ posts, auth_token, currentChannel, serverId }) => {
                 display: "flex",
                 flexDirection: "column",
                 overflowY: "auto",
+                justifyContent: "flex-end",
             }}
         >
             {posts ? (

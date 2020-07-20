@@ -1,17 +1,18 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
 import io from "socket.io-client";
 
-import Categories from "./Categories";
-import Chat from "./Chat";
-import Members from "./Members";
+import Categories from "./categories/Categories";
+import Chat from "./chat/Chat.js";
+import Members from "./members/Members";
+import Spinner from "../../components/shared/Spinner";
 
-import {
-    fetchServerAction,
-    joinChannelAction,
-} from "../../store/actions/serverActions";
+import { fetchServerAction } from "../../store/actions/serverActions";
+import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "./index.css";
 
@@ -24,6 +25,8 @@ export const socket = io("localhost:5000");
 const Server = ({ match }) => {
     const dispatch = useDispatch();
 
+    const [toggleMembers, setToggleMembers] = useState(true);
+
     const auth_token = useSelector((state) =>
         state.user.auth_token ? state.user.auth_token : null
     );
@@ -32,9 +35,7 @@ const Server = ({ match }) => {
         state.user.profile ? state.user.profile._id : null
     );
 
-    const server = useSelector((state) =>
-        state.servers.server ? state.servers.server : null
-    );
+    const server = useSelector((state) => state.servers.server);
 
     const currentChannel = useSelector((state) => state.servers.currentChannel);
 
@@ -51,10 +52,16 @@ const Server = ({ match }) => {
         });
 
         return () => {
+            socket.emit("leave", {
+                userId,
+                channelId: currentChannel._id,
+            });
             socket.emit("disconnect");
             socket.off();
         };
     }, [currentChannel]);
+
+    if (!server || !currentChannel) return <Spinner />;
 
     return (
         <div
@@ -69,6 +76,7 @@ const Server = ({ match }) => {
                 style={{
                     flex: 1,
                     overflowY: "scroll",
+                    display: "flex",
                 }}
                 className="categories"
             >
@@ -84,29 +92,73 @@ const Server = ({ match }) => {
                     />
                 </div>
             </div>
-            <div style={{ flex: 6 }} className="chat">
-                <Chat
-                    serverId={server._id}
-                    auth_token={auth_token}
-                    userId={userId}
-                    currentChannel={currentChannel}
-                />
-            </div>
+
             <div
-                style={{ flex: 1, overflowY: "scroll", background: "#292929" }}
-                className="members"
+                style={{
+                    flex: 8,
+                    display: "flex-column",
+                    position: "relative",
+                }}
             >
                 <div
                     style={{
                         background: "#181818",
                         height: 40,
+                        fontSize: 25,
+                        paddingLeft: 10,
+                        width: "100%",
+                        position: "absolute",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
                     }}
-                ></div>
-                <Members
-                    server={server}
-                    isAdmin={isAdmin}
-                    owner={server.owner}
-                />
+                >
+                    <div>
+                        {" "}
+                        {"#   "}
+                        {currentChannel.name}
+                    </div>
+                    <div>
+                        <button
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: "gray",
+                                cursor: "pointer",
+                                margin: 10,
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                            onClick={() => {
+                                setToggleMembers(
+                                    (toggleMembers) => !toggleMembers
+                                );
+                            }}
+                        >
+                            <FontAwesomeIcon
+                                style={{
+                                    filter: toggleMembers && "brightness(100)",
+                                }}
+                                icon={faUserFriends}
+                            />
+                        </button>
+                    </div>
+                </div>
+                <div style={{ display: "flex" }}>
+                    <Chat
+                        serverId={server._id}
+                        auth_token={auth_token}
+                        userId={userId}
+                        currentChannel={currentChannel}
+                    />
+                    <Members
+                        server={server}
+                        isAdmin={isAdmin}
+                        owner={server.owner}
+                        toggleMembers={toggleMembers}
+                    />
+                </div>
             </div>
         </div>
     );

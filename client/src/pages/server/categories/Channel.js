@@ -1,9 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { joinChannelAction } from "../../store/actions/serverActions";
+import { joinChannelAction } from "../../../store/actions/serverActions";
 
-const Channel = ({ categoryId, channel, serverId, auth_token, userId }) => {
+const Channel = ({ categoryId, channel, serverId, auth_token }) => {
     const dispatch = useDispatch();
 
     const currentChannelId = useSelector(

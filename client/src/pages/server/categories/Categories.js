@@ -5,10 +5,10 @@ import { useDispatch } from "react-redux";
 import {
     createCategoryAction,
     fetchServerAction,
-} from "../../store/actions/serverActions";
+} from "../../../store/actions/serverActions";
 import Category from "./Category";
 
-import { Button, Input, IconButton } from "@material-ui/core";
+import { Button, Input } from "@material-ui/core";
 
 const Categories = ({
     categories,
@@ -41,9 +41,8 @@ const Categories = ({
                 alignItems: "center",
                 justifyContent: "flex-start",
                 background: "#484848",
-                padding: 5,
+                padding: 15,
                 minHeight: "100vh",
-                minWidth: 200,
             }}
         >
             {isAdmin(owner, userId) && (
