@@ -53,7 +53,23 @@ export const serverReducer = (state = initialState, { type, payload }) => {
         case actions.POST_TO_CHANNEL_SUCCESS:
             return {
                 ...state,
-                currentPost: payload,
+                currentChannel: {
+                    ...currentChannel,
+                    posts: {
+                        ...currentChannel.posts,
+                        payload,
+                    },
+                },
+            };
+        case actions.DELETE_POST_SUCCESS:
+            return {
+                ...state,
+                currentChannel: {
+                    ...currentChannel,
+                    posts: state.currentChannel.posts.filter(
+                        (post) => post._id != payload
+                    ),
+                },
             };
         case actions.JOIN_CHANNEL_SUCCESS:
             const currentChannel = payload.channel.channel;

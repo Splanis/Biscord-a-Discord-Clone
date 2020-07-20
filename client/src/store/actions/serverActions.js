@@ -256,7 +256,13 @@ export const postToChannelAction = ({
 
         dispatch({
             type: actions.POST_TO_CHANNEL_SUCCESS,
-            payload: newPost.postId,
+            payload: {
+                _id: newPost._id,
+                owner: userId,
+                content: post,
+                edited: false,
+                dateCreated,
+            },
         });
     } catch (error) {
         dispatch({
@@ -300,6 +306,38 @@ export const editPostAction = ({
     } catch (error) {
         dispatch({
             type: actions.EDIT_POST_FAIL,
+            payload: error,
+        });
+    }
+};
+
+export const deletePostAction = ({
+    auth_token,
+    channelId,
+    categoryId,
+    serverId,
+    postId,
+}) => async (dispatch, getState) => {
+    try {
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        headers.append("auth_token", auth_token);
+
+        await fetch(
+            `http://localhost:5000/api/servers/${serverId}/${categoryId}/${channelId}/${postId}`,
+            {
+                method: "DELETE",
+                headers,
+            }
+        );
+
+        dispatch({
+            type: actions.DELETE_POST_SUCCESS,
+            payload: postId,
+        });
+    } catch (error) {
+        dispatch({
+            type: actions.DELETE_POST_FAIL,
             payload: error,
         });
     }
